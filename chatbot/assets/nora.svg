@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="nora-pink" x1="8" y1="7" x2="40" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff62b2"/>
+      <stop offset="1" stop-color="#c42d78"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="14" fill="#09090e"/>
+  <rect x="3" y="3" width="42" height="42" rx="12" fill="url(#nora-pink)" fill-opacity=".16" stroke="#ff2996" stroke-opacity=".8"/>
+  <path d="M13 34V14h4l14 15V14h4v20h-4L17 19v15h-4Z" fill="#fff"/>
+  <circle cx="38" cy="10" r="2" fill="#ff8cc7"/>
+</svg>

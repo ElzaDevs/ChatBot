@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#121214">
+    <meta name="description" content="Converse com a Nora usando OpenAI ou Claude, mantenha contexto local e gere apresentações PowerPoint.">
+    <title>Nora — Assistente</title>
+    <link rel="icon" href="assets/nora.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="chat-card" aria-label="Chat com Nora">
+        <header class="chat-header">
+          <div class="brand">
+            <img class="brand-mark" src="assets/nora-avatar.svg" alt="">
+            <div class="brand-copy">
+              <h1>Nora</h1>
+              <p><span class="status-dot" aria-hidden="true"></span> <span id="connection-status">Assistente online</span></p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="memory-button" id="memory-button" type="button" aria-haspopup="dialog" aria-controls="memory-dialog">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M10 17.25s-6.25-3.6-6.25-8.1A3.4 3.4 0 0 1 10 7.3a3.4 3.4 0 0 1 6.25 1.85c0 4.5-6.25 8.1-6.25 8.1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                <path d="M7.25 10h1.5l.8-1.6 1.15 3.2.8-1.6h1.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Memória</span>
+              <span class="memory-count" id="memory-count">0</span>
+            </button>
+            <label class="sr-only" for="provider-select">Escolha o modelo de IA</label>
+            <select id="provider-select" class="provider-select" aria-label="Escolha o modelo de IA">
+              <option value="openai">OpenAI</option>
+              <option value="anthropic">Claude</option>
+            </select>
+            <button class="icon-button" id="clear-button" type="button" aria-label="Limpar histórico" title="Nova conversa">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M3.75 5.5h12.5M8 5.5V3.75h4V5.5m2.75 0-.6 10.05a1.5 1.5 0 0 1-1.5 1.4H7.35a1.5 1.5 0 0 1-1.5-1.4L5.25 5.5m3 3v5m3.5-5v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="chat-content" id="chat-content">
+          <div class="welcome" id="welcome">
+            <img class="welcome-orb" src="assets/nora-avatar.svg" alt="Retrato ilustrado da Nora">
+            <p class="eyebrow">SUA PARCEIRA CRIATIVA</p>
+            <h2>Oi, como posso<br>ajudar você hoje?</h2>
+            <p class="welcome-description">Estou por aqui para pensar junto, tirar dúvidas ou simplesmente conversar.</p>
+            <div class="suggestions" aria-label="Sugestões de mensagem">
+              <button class="suggestion" type="button" data-prompt="Me ajude a organizar meu dia">✳ <span>Organizar meu dia</span></button>
+              <button class="suggestion" type="button" data-prompt="Quero aprender algo novo">↗ <span>Aprender algo novo</span></button>
+              <button class="suggestion" type="button" data-prompt="Me dê uma ideia criativa">✦ <span>Ter uma ideia criativa</span></button>
+              <button class="suggestion" type="button" data-prompt="Que horas são?">◷ <span>Que horas são?</span></button>
+              <button class="suggestion presentation-suggestion" type="button" data-prompt="Crie uma apresentação sobre: " data-compose="true">▤ <span>Criar apresentação PowerPoint</span></button>
+            </div>
+          </div>
+          <div class="messages" id="messages" aria-live="polite" aria-relevant="additions text"></div>
+          <div class="typing-row" id="typing-indicator" aria-label="Nora está digitando" hidden>
+            <div class="typing-bubble" aria-hidden="true"><span></span><span></span><span></span></div>
+            <span class="typing-label">Nora está digitando</span>
+          </div>
+        </div>
+
+        <div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
+
+        <form class="composer" id="message-form">
+          <label class="sr-only" for="message-input">Digite sua mensagem</label>
+          <textarea id="message-input" aria-label="Digite sua mensagem" placeholder="Escreva sua mensagem..." rows="1" maxlength="4000"></textarea>
+          <div class="composer-footer">
+            <span class="composer-hints"><span class="keyboard-hint"><kbd>↵</kbd> enviar <span class="hint-divider">·</span> <kbd>shift</kbd> + <kbd>↵</kbd> nova linha</span><span class="memory-hint">Memória local</span></span>
+            <button class="send-button" id="send-button" type="submit" aria-label="Enviar mensagem" disabled>
+              <span>Enviar</span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M3.75 10h12.5m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+        <footer class="chat-footer"><span>Uma mente criativa. Duas inteligências.</span><span class="privacy-mark"><span aria-hidden="true">◈</span> Histórico local · contexto enviado à IA</span></footer>
+      </section>
+    </main>
+    <dialog class="memory-dialog" id="memory-dialog" aria-labelledby="memory-title">
+      <form class="memory-dialog-content" id="memory-form">
+        <div class="memory-dialog-header">
+          <div>
+            <p class="eyebrow">SUA NORA, COM CONTEXTO</p>
+            <h2 id="memory-title">Memórias</h2>
+          </div>
+          <button class="icon-button" id="close-memory" type="button" aria-label="Fechar memórias">×</button>
+        </div>
+        <p class="memory-description">Fatos e preferências que você escolheu guardar. Ficam neste navegador e só são enviados à IA quando você conversa.</p>
+        <label class="sr-only" for="memory-input">Adicionar uma memória</label>
+        <div class="memory-add">
+          <input id="memory-input" type="text" maxlength="300" placeholder="Ex.: prefiro respostas curtas" autocomplete="off">
+          <button class="send-button" type="submit">Guardar</button>
+        </div>
+        <p class="memory-limit">Evite guardar senhas, dados financeiros ou informações sensíveis.</p>
+        <div class="memory-list" id="memory-list" aria-live="polite"></div>
+        <div class="memory-dialog-footer">
+          <button class="text-button" id="forget-all" type="button">Apagar todas</button>
+          <button class="secondary-button" id="close-memory-footer" type="button">Concluir</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
